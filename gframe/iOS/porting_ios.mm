@@ -318,7 +318,8 @@ int transformEvent(const irr::SEvent& event, bool& stopPropagation) {
 		case irr::EET_TOUCH_INPUT_EVENT: {
 			// Correct before Irrlicht synthesizes mouse events, so buttons, card
 			// hit testing, dragging and the stored right-click position all agree.
-			static thread_local bool forwardingTouch = false;
+			// UIKit delivers these events synchronously on the main thread.
+			static bool forwardingTouch = false;
 			if(forwardingTouch || ios_exposed_data.device_type != irr::EIDT_IOS
 					|| !ios_exposed_data.exposed_data || event.TouchInput.touchedCount != 1)
 				break;
