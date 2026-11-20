@@ -1,3 +1,9 @@
+# EDOPro 한국어 iOS 시험판
+
+[IPA 다운로드 · 약 135 MB](https://github.com/kkfromkor/edopro-ios-korean/releases/download/ios-korean-3/EDOPro-Korean-arm64.ipa) · [릴리스와 검증 결과](https://github.com/kkfromkor/edopro-ios-korean/releases/tag/ios-korean-3) · [포팅 작업 안내](porting/ios/README.md)
+
+한국어 카드 DB·메뉴·폰트와 공식 이미지 다운로드 설정을 포함한 비공식 ARM64 포트입니다. 컴파일·패키징·리소스 검사를 통과했습니다. 실제 아이폰 실행은 아직 미검증이며, 설치하려면 사이드로딩 도구나 개발자 인증서로 재서명해야 합니다.
+
 # [Project Ignis](https://github.com/ProjectIgnis): EDOPro
 
 The bleeding-edge automatic duel simulator, a fork of the [YGOPro client](https://github.com/Fluorohydride/ygopro).

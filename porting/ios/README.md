@@ -1,6 +1,11 @@
 # EDOPro 한국어 iOS 포팅
 
-이 폴더는 iOS ARM64 포팅의 초기 작업 기반입니다. 실제 iOS 컴파일과 기기 실행은 아직 검증하지 않았습니다.
+2026-11-21 iOS ARM64 컴파일·서명·IPA 패키징을 완료했습니다. 실제 기기 실행은 아직 검증하지 않았습니다.
+
+- [IPA 다운로드](https://github.com/kkfromkor/edopro-ios-korean/releases/download/ios-korean-3/EDOPro-Korean-arm64.ipa) (134,570,149 bytes)
+- [성공한 빌드](https://github.com/kkfromkor/edopro-ios-korean/actions/runs/44761750714), 소스 `ad4ccd37c3aca11b8ed2f6698363512bed3f3ad4`
+- SHA-256: `4e7b3155fd0335b8f06b642430910806782d9eaeb94148584c11fd6f4455b2fa`
+- 리소스 21,424개, 통합 검사 5개, ARM64/iPhoneOS 바이너리·시스템 라이브러리 의존성·서명 존재·IPA 내 모든 리소스 해시 검사 통과
 
 2026-11-20 로컬 검증: 리소스 21,423개 생성, 한국어 DB 6종 SQLite 무결성 검사, 현대 한글 11,172자 폰트 검사, 통합 검사 4개, Python 구문·Bash 구문·`git diff --check` 통과. 기본 한국어 `cards.cdb`에는 14,546개 항목이 있고 그중 14,459개 이름에 한글이 포함되어 있습니다. 이는 번역 완성률을 뜻하지 않습니다.
 
@@ -47,7 +52,7 @@ Windows PowerShell만으로 iOS 바이너리를 컴파일할 수는 없습니다
 
 공개 소스 저장소: https://github.com/kkfromkor/edopro-ios-korean
 
-`.github/workflows/ios-korean.yml`은 `ios-korean` 브랜치 업로드 또는 수동 실행으로 빌드합니다. 성공 시 검사 결과와 IPA를 공개 시험 릴리스에 올립니다. 최초 실제 컴파일 결과를 확인 중입니다.
+`.github/workflows/ios-korean.yml`은 `ios-korean` 브랜치 업로드 또는 수동 실행으로 빌드합니다. 성공 시 검사 결과와 IPA를 공개 시험 릴리스에 올립니다. `ios-korean-3` 릴리스까지 전체 과정이 성공했습니다.
 
 1. 원본의 cctools iOS 툴체인과 ARM64 vcpkg 의존성 설치
 2. `bash porting/ios/build.sh` 실행: 정적 듀얼 엔진/Lua를 포함한 `ygopro` 타깃 빌드
@@ -64,7 +69,7 @@ ad hoc 서명은 일반 아이폰 설치용 개발자 서명이 아닙니다. �
 
 ## 아직 검증할 항목
 
-- 최초 ARM64 컴파일/링크, IPA 재서명과 실제 기기 실행
+- 기기 설치를 위한 IPA 재서명과 실제 기기 실행
 - 첫 실행 복사 시간, 한글 입력·글꼴·터치·가로 화면·안전 영역
 - 카드 이미지의 기기 내 다운로드/캐시: 공식 데스크톱 클라이언트의 공개 이미지 주소를 적용했고 샘플 JPEG 응답을 확인함
 - 온라인 방 목록/대전, 로컬 네트워크 권한, 덱 편집, 리플레이
