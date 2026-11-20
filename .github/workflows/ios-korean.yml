@@ -20,7 +20,7 @@ jobs:
       BUILD_CONFIG: release
       VCPKG_ROOT: ./vcpkg2
       VCPKG_DEFAULT_TRIPLET: arm64-ios
-      VCPKG_CACHE_7Z_URL: https://github.com/edo9300/edopro-vcpkg-cache/releases/latest/download/installed_aarch64-ios-cctools.7z
+      VCPKG_CACHE_7Z_URL: https://github.com/edo9300/edopro-vcpkg-cache/releases/download/20261115/installed_aarch64-ios-cctools.7z
     steps:
       - uses: actions/checkout@v4
         with:

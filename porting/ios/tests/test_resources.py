@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 import sqlite3
+import ssl
 import sys
 import unittest
 
@@ -41,6 +42,13 @@ class KoreanResourceIntegrationTests(unittest.TestCase):
         self.assertEqual(repo["data_path"], ".")
         self.assertTrue((OUTPUT / "script/utility.lua").is_file())
         self.assertTrue((OUTPUT / "expansions/cards.cdb").is_file())
+
+    def test_https_and_image_sources_are_configured(self):
+        context = ssl.create_default_context(cafile=str(OUTPUT / "cacert.pem"))
+        self.assertGreater(context.cert_store_stats()["x509_ca"], 50)
+        user = json.loads((OUTPUT / "config/user_configs.json").read_text("utf-8"))
+        picture = next(source["url"] for source in user["urls"] if source["type"] == "pic")
+        self.assertEqual(picture.format(89631139), "https://pics.projectignis.org:2096/pics/89631139.jpg")
 
     def test_packager_rejects_non_executable_input(self):
         with self.assertRaises(ValueError):

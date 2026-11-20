@@ -14,6 +14,7 @@ OUTPUT = ROOT / "build/ios-korean/EDOProResources"
 KOREAN = ROOT / "localization/korean"
 DISTRIBUTION = ROOT / "porting/ios/distribution"
 FONTS = ROOT / "porting/ios/fonts"
+CACERT = ROOT / "porting/ios/certificates/cacert.pem"
 FONT = "NotoSansCJKkr-Regular.otf"
 FONT_COMMIT = "165c01b46ea533872e002e0785ff17e44f6d97d8"
 
@@ -97,7 +98,7 @@ def prepare():
                 DISTRIBUTION / "script/utility.lua",
                 DISTRIBUTION / "expansions/cards.cdb",
                 KOREAN / "cards.cdb", KOREAN / "strings.conf",
-                FONTS / FONT, FONTS / "LICENSE"]
+                FONTS / FONT, FONTS / "LICENSE", CACERT]
     for path in required:
         if not path.is_file():
             raise FileNotFoundError(f"Missing source: {path}. Initialize recursive submodules first.")
@@ -132,6 +133,7 @@ def prepare():
     shutil.copy2(FONTS / "LICENSE", OUTPUT / "fonts/NotoSansCJKkr-OFL.txt")
     shutil.copy2(DISTRIBUTION / "LICENSE", OUTPUT / "LICENSE-Distribution.txt")
     shutil.copy2(ROOT / "COPYING", OUTPUT / "LICENSE-EDOPro.txt")
+    shutil.copy2(CACERT, OUTPUT / "cacert.pem")
 
     config = OUTPUT / "config/system.conf"
     settings = {"language": "Korean", "textfont": f"fonts/{FONT} 12", "numfont": f"fonts/{FONT}"}
@@ -140,6 +142,13 @@ def prepare():
     config.write_text("\n".join(lines + [f"{key} = {value}" for key, value in settings.items()]) + "\n", "utf-8")
     config = OUTPUT / "config/user_configs.json"
     user = json.loads(config.read_text("utf-8-sig"))
+    # Same public image endpoints embedded in the official desktop client.
+    # EDOPro caches downloaded files in Documents/pics.
+    user["urls"] = [
+        {"url": "https://pics.projectignis.org:2096/pics/{}.jpg", "type": "pic"},
+        {"url": "https://pics.projectignis.org:2096/field/{}.png", "type": "field"},
+        {"url": "https://pics.projectignis.org:2096/pics/cover/{}.jpg", "type": "cover"},
+    ]
     user.setdefault("repos", []).append({
         "url": "https://github.com/Team-AllYGOPro/edopro-korean.git",
         "repo_name": "Korean translation (Team-AllYGOPro)",
