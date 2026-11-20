@@ -136,7 +136,8 @@ def prepare():
     shutil.copy2(CACERT, OUTPUT / "cacert.pem")
 
     config = OUTPUT / "config/system.conf"
-    settings = {"language": "Korean", "textfont": f"fonts/{FONT} 12", "numfont": f"fonts/{FONT}"}
+    settings = {"language": "Korean", "textfont": f"fonts/{FONT} 12", "numfont": f"fonts/{FONT}",
+                "dpi_scale": 2, "ios_layout_version": 1}
     lines = config.read_text("utf-8-sig").splitlines()
     lines = [line for line in lines if line.split("=", 1)[0].strip() not in settings]
     config.write_text("\n".join(lines + [f"{key} = {value}" for key, value in settings.items()]) + "\n", "utf-8")

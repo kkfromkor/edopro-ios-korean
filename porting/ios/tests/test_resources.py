@@ -34,6 +34,8 @@ class KoreanResourceIntegrationTests(unittest.TestCase):
         config = OUTPUT / "config"
         settings = (config / "system.conf").read_text("utf-8")
         self.assertIn("language = Korean\n", settings)
+        self.assertIn("dpi_scale = 2\n", settings)
+        self.assertIn("ios_layout_version = 1\n", settings)
         self.assertIn(f"textfont = fonts/{FONT} 12\n", settings)
         self.assertTrue((OUTPUT / "fonts" / FONT).is_file())
         user = json.loads((config / "user_configs.json").read_text("utf-8"))

@@ -8,6 +8,9 @@
 #include "logging.h"
 #include "file_stream.h"
 #include "fmt.h"
+#if EDOPRO_IOS
+#include "iOS/ios_layout.h"
+#endif
 
 namespace ygo {
 
@@ -16,6 +19,9 @@ GameConfig::GameConfig() {
 	Load(epro::format("{}/system.conf", porting::internal_storage));
 #endif
 	Load(EPRO_TEXT("./config/system.conf"));
+#if EDOPRO_IOS
+	porting::ios::migrateLayout(dpi_scale, ios_layout_version);
+#endif
 	if(configs.empty()) {
 		{
 			FileStream conf_file{ EPRO_TEXT("./config/configs.json"), FileStream::in };

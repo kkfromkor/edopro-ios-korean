@@ -10,6 +10,7 @@
 #include "../bufferio.h"
 #include "../game.h"
 #include "porting_ios.h"
+#include "ios_layout.h"
 
 static epro::mutex* queued_messages_mutex;
 static std::deque<std::function<void()>>* events;
@@ -314,6 +315,35 @@ int changeWorkDir(const char* newdir) {
 int transformEvent(const irr::SEvent& event, bool& stopPropagation) {
 	auto device = ygo::mainGame->device;
 	switch(event.EventType) {
+		case irr::EET_TOUCH_INPUT_EVENT: {
+			// Correct before Irrlicht synthesizes mouse events, so buttons, card
+			// hit testing, dragging and the stored right-click position all agree.
+			static thread_local bool forwardingTouch = false;
+			if(forwardingTouch || ios_exposed_data.device_type != irr::EIDT_IOS
+					|| !ios_exposed_data.exposed_data || event.TouchInput.touchedCount != 1)
+				break;
+			UIView* view = (__bridge UIView*)ios_exposed_data.exposed_data->OpenGLiOS.View;
+			if(!view)
+				break;
+			const auto bounds = view.bounds;
+			const auto size = device->getVideoDriver()->getScreenSize();
+			const auto position = ios::framebufferTouch({event.TouchInput.X, event.TouchInput.Y},
+				[UIScreen mainScreen].scale, bounds.origin.x, bounds.origin.y,
+				bounds.size.width, bounds.size.height, size.Width, size.Height);
+			irr::SEvent corrected = event;
+			corrected.TouchInput.X = position.x;
+			corrected.TouchInput.Y = position.y;
+			struct ForwardingScope {
+				bool& active;
+				ForwardingScope(bool& value) : active(value) { active = true; }
+				~ForwardingScope() { active = false; }
+			} scope(forwardingTouch);
+			device->postEventFromUser(corrected);
+			// Always consume the original, even if no widget handled the corrected
+			// event; otherwise Irrlicht would generate a second, uncorrected click.
+			stopPropagation = true;
+			return true;
+		}
 		case irr::EET_MOUSE_INPUT_EVENT: {
 			if(event.MouseInput.Event == irr::EMIE_LMOUSE_PRESSED_DOWN) {
 				auto hovered = ygo::mainGame->env->getRootGUIElement()->getElementFromPoint({ event.MouseInput.X, event.MouseInput.Y });

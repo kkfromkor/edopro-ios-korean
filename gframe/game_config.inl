@@ -76,10 +76,13 @@ OPTION(bool, ctrlClickIsRMB, true)
 #else
 OPTION(bool, ctrlClickIsRMB, false)
 #endif
-#if EDOPRO_ANDROID
+#if EDOPRO_ANDROID || EDOPRO_IOS
 OPTION(float, dpi_scale, 2.f)
 #else
 OPTION(float, dpi_scale, 1.f)
+#endif
+#if EDOPRO_IOS
+OPTION(int, ios_layout_version, 0)
 #endif
 OPTION(epro::path_string, skin, EPRO_TEXT("none"))
 OPTION(std::string, override_ssl_certificate_path, "")

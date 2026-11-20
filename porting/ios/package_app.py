@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Stage an ARM64 app for signing. This does not sign or install an IPA."""
 import argparse
+import os
 from pathlib import Path
 import plistlib
 import shutil
@@ -69,6 +70,7 @@ def package(binary, bundle_id):
         "CFBundleIdentifier": bundle_id,
         "CFBundleDisplayName": "EDOPro 한국어",
         "CFBundleDevelopmentRegion": "ko",
+        "CFBundleVersion": os.environ.get("GITHUB_RUN_NUMBER", "4"),
         "NSLocalNetworkUsageDescription": "같은 네트워크의 EDOPro 게임에 연결합니다.",
         "MinimumOSVersion": binary_info["minimum_ios"],
     })

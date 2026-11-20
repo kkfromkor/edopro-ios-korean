@@ -38,6 +38,8 @@ jobs:
           bash travis/dependencies.sh
       - name: Build and assemble Korean app
         run: |
+          g++ -std=c++17 -Wall -Wextra -Werror porting/ios/tests/ios_layout_test.cpp -o /tmp/ios-layout-test
+          /tmp/ios-layout-test
           bash porting/ios/build.sh
           python3 -m unittest discover -s porting/ios/tests -v
       - name: Ad hoc sign and archive
