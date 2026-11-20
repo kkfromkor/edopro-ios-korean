@@ -1,8 +1,8 @@
 # EDOPro 한국어 iOS 시험판
 
-[IPA 다운로드 · 약 135 MB](https://github.com/kkfromkor/edopro-ios-korean/releases/download/ios-korean-3/EDOPro-Korean-arm64.ipa) · [릴리스와 검증 결과](https://github.com/kkfromkor/edopro-ios-korean/releases/tag/ios-korean-3) · [포팅 작업 안내](porting/ios/README.md)
+[IPA 다운로드 · 약 135 MB](https://github.com/kkfromkor/edopro-ios-korean/releases/download/ios-korean-5/EDOPro-Korean-arm64.ipa) · [릴리스와 검증 결과](https://github.com/kkfromkor/edopro-ios-korean/releases/tag/ios-korean-5) · [포팅 작업 안내](porting/ios/README.md)
 
-한국어 카드 DB·메뉴·폰트와 공식 이미지 다운로드 설정을 포함한 비공식 ARM64 포트입니다. 컴파일·패키징·리소스 검사를 통과했습니다. 실제 아이폰 실행은 아직 미검증이며, 설치하려면 사이드로딩 도구나 개발자 인증서로 재서명해야 합니다.
+한국어 카드 DB·메뉴·폰트와 공식 이미지 다운로드 설정을 포함한 비공식 ARM64 포트입니다. build 5는 iOS 터치 좌표 보정과 화면 스케일링 200%를 적용합니다. 컴파일·좌표 계산·패키징·리소스 검사를 통과했으며 수정 후 실제 기기의 터치 확인은 별도로 필요합니다. 설치하려면 사이드로딩 도구나 개발자 인증서로 재서명해야 합니다.
 
 # [Project Ignis](https://github.com/ProjectIgnis): EDOPro
 

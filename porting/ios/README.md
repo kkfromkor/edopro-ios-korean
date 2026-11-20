@@ -1,11 +1,11 @@
 # EDOPro 한국어 iOS 포팅
 
-2026-11-21 iOS ARM64 컴파일·서명·IPA 패키징을 완료했습니다. 실제 기기 실행은 아직 검증하지 않았습니다.
+2026-11-21 iOS 터치 좌표 보정과 인게임 화면 배율 200%를 적용한 build 5의 컴파일·서명·IPA 패키징을 완료했습니다. 수정 후 실제 기기의 터치 확인은 별도로 필요합니다.
 
-- [IPA 다운로드](https://github.com/kkfromkor/edopro-ios-korean/releases/download/ios-korean-3/EDOPro-Korean-arm64.ipa) (134,570,149 bytes)
-- [성공한 빌드](https://github.com/kkfromkor/edopro-ios-korean/actions/runs/44761750714), 소스 `ad4ccd37c3aca11b8ed2f6698363512bed3f3ad4`
-- SHA-256: `4e7b3155fd0335b8f06b642430910806782d9eaeb94148584c11fd6f4455b2fa`
-- 리소스 21,424개, 통합 검사 5개, ARM64/iPhoneOS 바이너리·시스템 라이브러리 의존성·서명 존재·IPA 내 모든 리소스 해시 검사 통과
+- [IPA 다운로드](https://github.com/kkfromkor/edopro-ios-korean/releases/download/ios-korean-5/EDOPro-Korean-arm64.ipa) (134,570,941 bytes)
+- [성공한 빌드](https://github.com/kkfromkor/edopro-ios-korean/actions/runs/44765121213), 소스 `24fc71ac0b36d63a0bc676871127ec18aba019a9`
+- SHA-256: `fa05070ea1d8e01baf67b7a881731a16cab681f53c0e22ac85bb2a9d09e31aa8`
+- C++ 터치 좌표·설정 이전 검사, 리소스 21,424개, 통합 검사 5개, ARM64/iPhoneOS 바이너리·시스템 라이브러리 의존성·서명 존재·IPA 내 모든 리소스 해시 검사 통과
 
 2026-11-20 로컬 검증: 리소스 21,423개 생성, 한국어 DB 6종 SQLite 무결성 검사, 현대 한글 11,172자 폰트 검사, 통합 검사 4개, Python 구문·Bash 구문·`git diff --check` 통과. 기본 한국어 `cards.cdb`에는 14,546개 항목이 있고 그중 14,459개 이름에 한글이 포함되어 있습니다. 이는 번역 완성률을 뜻하지 않습니다.
 
@@ -52,7 +52,7 @@ Windows PowerShell만으로 iOS 바이너리를 컴파일할 수는 없습니다
 
 공개 소스 저장소: https://github.com/kkfromkor/edopro-ios-korean
 
-`.github/workflows/ios-korean.yml`은 `ios-korean` 브랜치 업로드 또는 수동 실행으로 빌드합니다. 성공 시 검사 결과와 IPA를 공개 시험 릴리스에 올립니다. `ios-korean-3` 릴리스까지 전체 과정이 성공했습니다.
+`.github/workflows/ios-korean.yml`은 `ios-korean` 브랜치 업로드 또는 수동 실행으로 빌드합니다. 성공 시 검사 결과와 IPA를 공개 시험 릴리스에 올립니다. `ios-korean-5` 릴리스까지 전체 과정이 성공했습니다.
 
 1. 원본의 cctools iOS 툴체인과 ARM64 vcpkg 의존성 설치
 2. `bash porting/ios/build.sh` 실행: 정적 듀얼 엔진/Lua를 포함한 `ygopro` 타깃 빌드
@@ -71,7 +71,7 @@ ad hoc 서명은 일반 아이폰 설치용 개발자 서명이 아닙니다. �
 
 네이티브 Irrlicht iOS 드라이버는 `UIScreen.scale`로 터치 좌표를 만들지만 렌더링에는 `nativeScale`을 사용합니다. 두 값이 다르거나 뷰 크기가 달라지는 경우 터치가 어긋납니다. `porting_ios.mm`에서 단일 터치를 UIKit 좌표로 되돌린 뒤 실제 뷰 영역과 드라이버 화면 크기로 변환하여, 마우스 이벤트 생성 전에 한 번만 전달합니다. 두 손가락/세 손가락 제스처와 SDL 드라이버는 기존 흐름을 유지합니다. 참고: [Irrlicht iOS 드라이버](https://github.com/edo9300/irrlicht1-8-4/blob/1.9-custom/source/Irrlicht/CIrrDeviceiOS.mm).
 
-화면 배율은 `dpi_scale = 2`(200%)입니다. `ios_layout_version`이 없는 기존 설정도 최초 실행에 한 번 전환합니다. 이 버전 값은 정상 종료 시 다른 설정과 함께 저장되므로 이후 사용자가 바꾼 배율은 유지됩니다. 터치 좌표에는 UI 배율을 중복 적용하지 않습니다.
+화면 배율은 `dpi_scale = 2`(200%)입니다. `ios_layout_version`이 없는 기존 설정도 최초 실행에 한 번 전환합니다. 이 버전 값은 앱의 백그라운드 전환이나 정상 종료 시 다른 설정과 함께 저장되므로 이후 사용자가 바꾼 배율은 유지됩니다. 터치 좌표에는 UI 배율을 중복 적용하지 않습니다.
 
 CI에서 실제 C++ 좌표 변환 함수를 일반 Retina, Plus, 화면 확대, 가로 뷰 크기 변화, 경계와 화면 밖 드래그 좌표로 검사합니다. 실제 기기의 수정 후 터치 확인은 별도로 필요합니다.
 
