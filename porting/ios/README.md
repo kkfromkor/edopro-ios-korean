@@ -45,7 +45,9 @@ python porting/ios/prepare_resources.py
 
 Windows PowerShell만으로 iOS 바이너리를 컴파일할 수는 없습니다. 이 작업은 원본과 같은 **Linux cctools 교차 컴파일 환경**을 사용하도록 준비했습니다. 현재 PC에서 이 환경은 확인되지 않았습니다.
 
-`.github/workflows/ios-korean.yml`에 수동 실행용 GitHub Actions 절차가 있습니다. 이 파일은 로컬에만 준비했으며 GitHub 저장소 생성/업로드/실행은 하지 않았습니다. 전체 변경사항을 보존한 저장소에서 워크플로를 실행하면 다음을 시도합니다.
+공개 소스 저장소: https://github.com/kkfromkor/edopro-ios-korean
+
+`.github/workflows/ios-korean.yml`은 `ios-korean` 브랜치 업로드 또는 수동 실행으로 빌드합니다. 성공 시 검사 결과와 IPA를 공개 시험 릴리스에 올립니다. 최초 실제 컴파일 결과를 확인 중입니다.
 
 1. 원본의 cctools iOS 툴체인과 ARM64 vcpkg 의존성 설치
 2. `bash porting/ios/build.sh` 실행: 정적 듀얼 엔진/Lua를 포함한 `ygopro` 타깃 빌드
