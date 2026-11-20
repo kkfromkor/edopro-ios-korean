@@ -1,0 +1,71 @@
+name: Build Korean iOS port
+
+on:
+  push:
+    branches: [ios-korean]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  ios-arm64:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      TRAVIS_OS_NAME: linux
+      TARGET_OS: ios
+      ARCH: arm64
+      BUILD_CONFIG: release
+      VCPKG_ROOT: ./vcpkg2
+      VCPKG_DEFAULT_TRIPLET: arm64-ios
+      VCPKG_CACHE_7Z_URL: https://github.com/edo9300/edopro-vcpkg-cache/releases/latest/download/installed_aarch64-ios-cctools.7z
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install archive tools
+        run: sudo apt-get update && sudo apt-get install -y p7zip-full zip
+      - name: Install upstream iOS cross compiler
+        run: |
+          curl --fail --location --retry 3 https://github.com/edo9300/cctools-build/releases/download/osxcross/cctools-ios.tar.xz -o /tmp/cctools-ios.tar.xz
+          sudo tar -xf /tmp/cctools-ios.tar.xz -C /opt
+          sudo cp travis/AVFoundation.tbd /opt/cctools/SDK/iPhoneOS16.1.sdk/System/Library/Frameworks/AVFoundation.framework/AVFoundation.tbd
+      - name: Install upstream build dependencies
+        run: |
+          bash travis/install-premake5.sh
+          bash travis/dependencies.sh
+      - name: Build and assemble Korean app
+        run: |
+          bash porting/ios/build.sh
+          python3 -m unittest discover -s porting/ios/tests -v
+      - name: Ad hoc sign and archive
+        run: |
+          curl --fail --location --retry 3 https://github.com/indygreg/apple-platform-rs/releases/download/apple-codesign%2F0.29.0/apple-codesign-0.29.0-x86_64-unknown-linux-musl.tar.gz -o /tmp/codesign.tar.gz
+          tar -xf /tmp/codesign.tar.gz -C /tmp
+          /tmp/apple-codesign-0.29.0-x86_64-unknown-linux-musl/rcodesign sign build/ios-korean/Payload/EDOPro.app
+          cd build/ios-korean
+          zip -q -r EDOPro-Korean-arm64.ipa Payload
+          sha256sum EDOPro-Korean-arm64.ipa > SHA256SUMS.txt
+      - name: Validate signed IPA and every packaged resource
+        run: python3 porting/ios/verify_ipa.py build/ios-korean/EDOPro-Korean-arm64.ipa
+      - uses: actions/upload-artifact@v4
+        with:
+          name: EDOPro-Korean-arm64
+          path: |
+            build/ios-korean/EDOPro-Korean-arm64.ipa
+            build/ios-korean/EDOPro-Korean-arm64.validation.json
+            build/ios-korean/EDOProResources/resource-manifest.json
+          if-no-files-found: error
+      - name: Publish downloadable prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "ios-korean-${GITHUB_RUN_NUMBER}" \
+            build/ios-korean/EDOPro-Korean-arm64.ipa \
+            build/ios-korean/EDOPro-Korean-arm64.validation.json \
+            build/ios-korean/SHA256SUMS.txt \
+            build/ios-korean/EDOProResources/resource-manifest.json \
+            --target "$GITHUB_SHA" --prerelease \
+            --title "EDOPro 한국어 iOS ARM64 · build ${GITHUB_RUN_NUMBER}" \
+            --notes-file porting/ios/RELEASE_NOTES.md

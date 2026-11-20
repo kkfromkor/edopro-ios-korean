@@ -1,3 +1,9 @@
 [submodule "ocgcore"]
 	path = ocgcore
 	url = https://github.com/edo9300/ygopro-core.git
+[submodule "localization/korean"]
+	path = localization/korean
+	url = https://github.com/Team-AllYGOPro/edopro-korean.git
+[submodule "porting/ios/distribution"]
+	path = porting/ios/distribution
+	url = https://github.com/ProjectIgnis/Distribution.git

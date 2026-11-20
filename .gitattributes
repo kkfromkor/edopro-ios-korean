@@ -1,2 +1,8 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Cross-compilation scripts must retain POSIX line endings on Windows.
+*.sh text eol=lf
+*.py text eol=lf
+*.yml text eol=lf
+*.otf binary

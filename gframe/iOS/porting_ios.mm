@@ -272,9 +272,38 @@ epro::path_string getWorkDir() {
 
 		epro::path_string res = [docsDir UTF8String];
 
-		[filemgr release];
 		printf("%s\n", res.data());
 		return res;
+	}
+}
+
+// Seed the writable Documents directory from the IPA on first launch.
+// Existing settings, decks and downloaded data must survive app upgrades.
+bool prepareBundledResources(const epro::path_string& workdir) {
+	@autoreleasepool {
+		NSString* source = [[NSBundle mainBundle] pathForResource:@"EDOProResources" ofType:nil];
+		if(!source)
+			return true; // Preserve support for upstream packages without bundled data.
+		NSString* destination = [NSString stringWithUTF8String:workdir.c_str()];
+		NSFileManager* manager = [NSFileManager defaultManager];
+		for(NSString* relative in [manager enumeratorAtPath:source]) {
+			NSString* input = [source stringByAppendingPathComponent:relative];
+			NSString* output = [destination stringByAppendingPathComponent:relative];
+			BOOL isDirectory = NO;
+			if(![manager fileExistsAtPath:input isDirectory:&isDirectory])
+				return false;
+			if([manager fileExistsAtPath:output])
+				continue;
+			NSError* error = nil;
+			BOOL success = isDirectory
+				? [manager createDirectoryAtPath:output withIntermediateDirectories:YES attributes:nil error:&error]
+				: [manager copyItemAtPath:input toPath:output error:&error];
+			if(!success) {
+				NSLog(@"EDOPro resource setup failed for %@: %@", relative, error);
+				return false;
+			}
+		}
+		return true;
 	}
 }
 
@@ -353,6 +382,8 @@ void irrlicht_main(){
 	events = &_events;
 
 	const auto workdir = porting::getWorkDir() + "/";
+	if(!porting::prepareBundledResources(workdir))
+		exit(EXIT_FAILURE);
 
 	std::array<const char*, 3> args{ {"", "-C", workdir.data()} };
 

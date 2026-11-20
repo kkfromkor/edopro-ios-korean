@@ -45,3 +45,10 @@ premake5.exe
 !/irrlicht/defines.lua
 bundled_font.cpp
 NotoSansJP-Regular.otf
+
+# Local Korean iOS tooling caches
+/porting/ios/__pycache__/
+/porting/ios/tests/__pycache__/
+/vcpkg2/
+/upx
+/.local/
